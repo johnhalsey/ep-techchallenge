@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
+    const PAST = 'past';
+    const FUTURE = 'future';
+
     protected $fillable = [
         'client_id',
         'start',

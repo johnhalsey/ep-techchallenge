@@ -37,9 +37,20 @@
 
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
-                    <h3 class="mb-3">List of client bookings</h3>
 
-                    <template v-if="client.bookings && client.bookings.length > 0">
+                    <select name="bookingsFilter"
+                            id="bookingsFilter"
+                            class="border rounded p-1"
+                            v-model="bookingsFilter"
+                    >
+                        <option v-for="(option, index) in filterOptions"
+                                :key="'filter-option-' + index"
+                                :value="option.key">{{option.value}}</option>
+                    </select>
+
+                    <h3 class="mb-3 mt-3">List of client bookings</h3>
+
+                    <template v-if="filteredBookings && filteredBookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
@@ -49,7 +60,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in filteredBookings" :key="booking.id">
                                     <td>{{booking.time_slot}}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -88,6 +99,31 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            bookingsFilter: 'all',
+            filterOptions: [
+                {
+                    key: 'past',
+                    value: 'Past Bookings only'
+                },
+                {
+                    key: 'all',
+                    value: 'All bookings'
+                },
+                {
+                    key: 'future',
+                    value: 'Future Bookings only'
+                },
+            ]
+        }
+    },
+
+    computed: {
+        filteredBookings () {
+            if (this.bookingsFilter == 'all') {
+                return this.client.bookings
+            }
+
+            return this.client.bookings.filter(booking => booking.state == this.bookingsFilter)
         }
     },
 

@@ -1981,8 +1981,30 @@ __webpack_require__.r(__webpack_exports__);
   props: ['client'],
   data: function data() {
     return {
-      currentTab: 'bookings'
+      currentTab: 'bookings',
+      bookingsFilter: 'all',
+      filterOptions: [{
+        key: 'past',
+        value: 'Past Bookings only'
+      }, {
+        key: 'all',
+        value: 'All bookings'
+      }, {
+        key: 'future',
+        value: 'Future Bookings only'
+      }]
     };
+  },
+  computed: {
+    filteredBookings: function filteredBookings() {
+      var _this = this;
+      if (this.bookingsFilter == 'all') {
+        return this.client.bookings;
+      }
+      return this.client.bookings.filter(function (booking) {
+        return booking.state == _this.bookingsFilter;
+      });
+    }
   },
   methods: {
     switchTab: function switchTab(newTab) {
@@ -2306,9 +2328,39 @@ var render = function render() {
     }
   }, [_vm._v("Journals")])]), _vm._v(" "), _vm.currentTab == "bookings" ? _c("div", {
     staticClass: "bg-white rounded p-4"
-  }, [_c("h3", {
-    staticClass: "mb-3"
-  }, [_vm._v("List of client bookings")]), _vm._v(" "), _vm.client.bookings && _vm.client.bookings.length > 0 ? [_c("table", [_vm._m(0), _vm._v(" "), _c("tbody", _vm._l(_vm.client.bookings, function (booking) {
+  }, [_c("select", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.bookingsFilter,
+      expression: "bookingsFilter"
+    }],
+    staticClass: "border rounded p-1",
+    attrs: {
+      name: "bookingsFilter",
+      id: "bookingsFilter"
+    },
+    on: {
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.bookingsFilter = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
+      }
+    }
+  }, _vm._l(_vm.filterOptions, function (option, index) {
+    return _c("option", {
+      key: "filter-option-" + index,
+      domProps: {
+        value: option.key
+      }
+    }, [_vm._v(_vm._s(option.value))]);
+  }), 0), _vm._v(" "), _c("h3", {
+    staticClass: "mb-3 mt-3"
+  }, [_vm._v("List of client bookings")]), _vm._v(" "), _vm.filteredBookings && _vm.filteredBookings.length > 0 ? [_c("table", [_vm._m(0), _vm._v(" "), _c("tbody", _vm._l(_vm.filteredBookings, function (booking) {
     return _c("tr", {
       key: booking.id
     }, [_c("td", [_vm._v(_vm._s(booking.time_slot))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(booking.notes))]), _vm._v(" "), _c("td", [_c("button", {
