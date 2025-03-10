@@ -8,9 +8,9 @@ use App\Http\Resources\ClientResource;
 
 class ClientsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $clients = Client::all();
+        $clients = $request->user()->clients;
 
         foreach ($clients as $client) {
             $client->append('bookings_count');
@@ -34,10 +34,11 @@ class ClientsController extends Controller
     public function store(Request $request)
     {
         $client = new Client;
+        $client->user_id = $request->user()->id;
         $client->name = $request->get('name');
         $client->email = $request->get('email');
         $client->phone = $request->get('phone');
-        $client->adress = $request->get('adress');
+        $client->address = $request->get('address');
         $client->city = $request->get('city');
         $client->postcode = $request->get('postcode');
         $client->save();
