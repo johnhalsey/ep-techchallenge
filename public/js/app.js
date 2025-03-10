@@ -1922,14 +1922,42 @@ __webpack_require__.r(__webpack_exports__);
         address: '',
         city: '',
         postcode: ''
-      }
+      },
+      errorBag: []
     };
   },
   methods: {
     storeClient: function storeClient() {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/clients', this.client).then(function (data) {
-        window.location.href = data.data.url;
+      var _this = this;
+      this.errorBag = [];
+      var headers = {
+        'Content-Type': 'application/json'
+      };
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/clients', this.client, {
+        headers: headers
+      }).then(function (response) {
+        window.location.href = response.data.url;
+      })["catch"](function (error) {
+        for (var key in error.response.data.errors) {
+          _this.errorBag.push({
+            key: key,
+            value: error.response.data.errors[key][0]
+          });
+        }
       });
+    },
+    errorBagHas: function errorBagHas(key) {
+      if (this.errorBag.find(function (error) {
+        return error.key == key;
+      })) {
+        return true;
+      }
+      return false;
+    },
+    errorBagValue: function errorBagValue(key) {
+      return this.errorBag.find(function (error) {
+        return error.key == key;
+      }).value;
     }
   }
 });
@@ -2059,7 +2087,9 @@ var render = function render() {
         _vm.$set(_vm.client, "name", $event.target.value);
       }
     }
-  })]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _vm.errorBagHas("name") ? _c("div", {
+    staticClass: "text-red-500"
+  }, [_vm._v(_vm._s(_vm.errorBagValue("name")))]) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     attrs: {
@@ -2086,7 +2116,9 @@ var render = function render() {
         _vm.$set(_vm.client, "email", $event.target.value);
       }
     }
-  })]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _vm.errorBagHas("email") ? _c("div", {
+    staticClass: "text-red-500"
+  }, [_vm._v(_vm._s(_vm.errorBagValue("email")))]) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     attrs: {
@@ -2113,7 +2145,9 @@ var render = function render() {
         _vm.$set(_vm.client, "phone", $event.target.value);
       }
     }
-  })]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _vm.errorBagHas("phone") ? _c("div", {
+    staticClass: "text-red-500"
+  }, [_vm._v(_vm._s(_vm.errorBagValue("phone")))]) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     attrs: {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Client;
 use Illuminate\Http\Request;
 use App\Http\Resources\ClientResource;
+use App\Http\Requests\StoreClientRequest;
 
 class ClientsController extends Controller
 {
@@ -31,7 +32,7 @@ class ClientsController extends Controller
         return view('clients.show', ['client' => (new ClientResource($client))->withBookings()]);
     }
 
-    public function store(Request $request)
+    public function store(StoreClientRequest $request)
     {
         $client = new Client;
         $client->user_id = $request->user()->id;
