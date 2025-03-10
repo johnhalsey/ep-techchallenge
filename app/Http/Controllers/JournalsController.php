@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use App\Journal;
 use Illuminate\Http\Request;
 use App\Http\Resources\ClientResource;
 use App\Http\Requests\StoreClientJournalRequest;
@@ -23,5 +24,12 @@ class JournalsController extends Controller
         ]);
 
         return response()->json('OK', 201);
+    }
+
+    public function destroy(Request $request, Client $client, Journal $journal)
+    {
+        $journal->delete();
+
+        return response()->json();
     }
 }

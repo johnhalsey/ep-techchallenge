@@ -2000,11 +2000,21 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'JournalsList',
   props: {
     client: {
       type: Object
+    }
+  },
+  methods: {
+    deleteJournal: function deleteJournal(journal) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]('/clients/' + this.client.id + '/journals/' + journal.id).then(function () {
+        location.reload();
+      });
     }
   }
 });
@@ -2318,18 +2328,29 @@ var render = function render() {
     attrs: {
       href: "/clients/" + _vm.client.id + "/journals/create"
     }
-  }, [_vm._v("+ New Entry")])]), _vm._v(" "), _vm.client.journals && _vm.client.journals.length > 0 ? _vm._l(_vm.client.journals, function (journal, index) {
+  }, [_vm._v("+ New Entry")])]), _vm._v(" "), _vm.client.journals && _vm.client.journals.length > 0 ? _c("div", {
+    staticClass: "mt-3"
+  }, _vm._l(_vm.client.journals, function (journal, index) {
     return _c("div", {
       key: "journal-" + index,
       staticClass: "border-bottom pb-3 mb-3"
     }, [_c("div", {
+      staticClass: "d-flex justify-content-between"
+    }, [_c("div", {
       staticClass: "small font-weight-bold mb-3"
-    }, [_vm._v(_vm._s(journal.date))]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(journal.date))]), _vm._v(" "), _c("div", [_c("button", {
+      staticClass: "btn btn-danger btn-sm",
+      on: {
+        click: function click($event) {
+          return _vm.deleteJournal(journal);
+        }
+      }
+    }, [_vm._v("Delete")])])]), _vm._v(" "), _c("div", {
       domProps: {
         innerHTML: _vm._s(journal.entry)
       }
     })]);
-  }) : [_c("p", {
+  }), 0) : [_c("p", {
     staticClass: "text-center"
   }, [_vm._v("There are journals.")])]], 2);
 };
