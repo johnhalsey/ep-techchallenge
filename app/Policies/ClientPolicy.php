@@ -10,7 +10,7 @@ class ClientPolicy
 {
     use HandlesAuthorization;
 
-    public function manage(User $user, Client $client)
+    public function manage(User $user, Client $client): bool
     {
         return $client->user_id === $user->id;
     }

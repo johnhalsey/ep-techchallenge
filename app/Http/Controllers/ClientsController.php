@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Resources\ClientResource;
 use App\Http\Requests\StoreClientRequest;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ClientsController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $clients = $request->user()
             ->clients()
@@ -21,12 +24,12 @@ class ClientsController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(): View
     {
         return view('clients.create');
     }
 
-    public function show(Client $client)
+    public function show(Client $client): View
     {
         return view('clients.show', [
             'client' => (new ClientResource($client))
@@ -35,7 +38,7 @@ class ClientsController extends Controller
         ]);
     }
 
-    public function store(StoreClientRequest $request)
+    public function store(StoreClientRequest $request): JsonResponse
     {
         $client = new Client;
         $client->user_id = $request->user()->id;
@@ -47,10 +50,10 @@ class ClientsController extends Controller
         $client->postcode = $request->get('postcode');
         $client->save();
 
-        return $client;
+        return response()->json('OK', 201);
     }
 
-    public function destroy(Client $client)
+    public function destroy(Client $client): JsonResponse
     {
         $client->delete();
 

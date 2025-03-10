@@ -22,7 +22,8 @@ class Booking extends Model
         'end',
     ];
 
-    protected function getTimeSlotAttribute() {
+    protected function getTimeSlotAttribute(): string
+    {
         return Carbon::parse($this->start)->format('l j F Y H:i') . ' to ' . Carbon::parse($this->end)->format('H:i');
     }
 }

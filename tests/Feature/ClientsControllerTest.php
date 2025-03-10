@@ -189,8 +189,7 @@ class ClientsControllerTest extends TestCase
                 'email' => '',
                 'phone' => '+44000 123456'
             ]
-        )->assertStatus(201)
-            ->assertJsonMissingValidationErrors(['phone']);
+        )->assertStatus(201);
     }
 
 
