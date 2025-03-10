@@ -1985,7 +1985,12 @@ __webpack_require__.r(__webpack_exports__);
   props: ['clients'],
   methods: {
     deleteClient: function deleteClient(client) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(client.id));
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(client.id)).then(function () {
+        // Attempted to this.$forceUpdate();
+        // but there seems to be some issue with that function and this version of vue 2.5.17
+        // As mentioned on a comment on this SO post https://stackoverflow.com/a/40586872/3233770
+        location.reload();
+      });
     }
   }
 });

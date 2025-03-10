@@ -50,6 +50,9 @@ class ClientsController extends Controller
     {
         Client::where('id', $client)->delete();
 
-        return 'Deleted';
+        // attempted to return a 204 here, but axios did not pick this up
+        // as a successful response for DELETE
+
+        return response()->json();
     }
 }

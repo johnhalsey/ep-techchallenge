@@ -41,8 +41,14 @@ export default {
 
     methods: {
         deleteClient(client) {
-            axios.delete(`/clients/${client.id}`);
-        }
+            axios.delete(`/clients/${client.id}`)
+                .then(() => {
+                    // Attempted to this.$forceUpdate();
+                    // but there seems to be some issue with that function and this version of vue 2.5.17
+                    // As mentioned on a comment on this SO post https://stackoverflow.com/a/40586872/3233770
+                    location.reload();
+                })
+        },
     }
 }
 </script>
