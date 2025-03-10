@@ -4,10 +4,8 @@ namespace Tests\Feature;
 
 use App\User;
 use App\Client;
-use App\Http\Resources\ClientResource;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ClientsControllerTest extends TestCase
 {

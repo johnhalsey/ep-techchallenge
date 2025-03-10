@@ -37,7 +37,7 @@ Complete as many as you can. If you got some time left, there's BONUS tasks, but
 
 **BONUS TASKS!**
 - [ ] *BONUS:* (FEATURE) Users have requested the ability to write journals for their clients. A Journal should have a date field (without hours/minutes) and a text field (unlimited length). A client can have many journals. A user should be able to view, create and delete journals.
-- [ ] *BONUS:* (REFACTOR) We strive for fast and readable code that follows Laravel's/Vue.js style and best practices. Take the time remaining and refactor any code you think can be improved, including ours. The goal is to leave the code better than you found it ;)
+- [X] *BONUS:* (REFACTOR) We strive for fast and readable code that follows Laravel's/Vue.js style and best practices. Take the time remaining and refactor any code you think can be improved, including ours. The goal is to leave the code better than you found it ;)
 
 ## Thank You!
 
