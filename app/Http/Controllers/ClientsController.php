@@ -11,11 +11,11 @@ class ClientsController extends Controller
 {
     public function index(Request $request)
     {
-        $clients = $request->user()->clients;
-
-        foreach ($clients as $client) {
-            $client->append('bookings_count');
-        }
+        $clients = $request->user()
+            ->clients()
+            ->with(['bookings'])
+            ->withCount(['bookings'])
+            ->get();
 
         return view('clients.index', ['clients' => $clients]);
     }
@@ -25,10 +25,8 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show(Client $client)
     {
-        $client = Client::where('id', $client)->with('bookings')->first();
-
         return view('clients.show', ['client' => (new ClientResource($client))->withBookings()]);
     }
 
@@ -47,9 +45,9 @@ class ClientsController extends Controller
         return $client;
     }
 
-    public function destroy($client)
+    public function destroy(Client $client)
     {
-        Client::where('id', $client)->delete();
+        $client->delete();
 
         // attempted to return a 204 here, but axios did not pick this up
         // as a successful response for DELETE

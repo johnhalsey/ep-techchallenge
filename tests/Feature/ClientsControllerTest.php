@@ -32,11 +32,10 @@ class ClientsControllerTest extends TestCase
 
         $this->actingAs($user);
 
-        $expetecedClients = $user->clients;
-
-        foreach ($expetecedClients as $client) {
-            $client->append('bookings_count');
-        }
+        $expetecedClients = $user->clients()
+            ->with(['bookings'])
+            ->withCount(['bookings'])
+            ->get();
 
         $this->get(route('clients.index'))
             ->assertStatus(200)
@@ -48,35 +47,48 @@ class ClientsControllerTest extends TestCase
     {
         $user = factory(User::class)->create();
         $this->actingAs($user);
-        $this->call(
+        $this->json(
             'POST',
             '/clients',
             [
-                'name' => ''
+                'name' => '',
+                'email' => 'john@test.com',
             ]
-        )->assertStatus(302)
-            ->assertSessionHasErrors(['name']);
+        )->assertStatus(422)
+            ->assertJsonValidationErrors(['name'])
+            ->assertJsonFragment([
+                'errors' => [
+                    'name' => ['The name field is required.']
+                ]
+            ]);
+
     }
 
     public function test_storing_client_validation_will_fail_if_name_gt_190_chars()
     {
         $user = factory(User::class)->create();
         $this->actingAs($user);
-        $this->call(
+        $this->json(
             'POST',
             '/clients',
             [
-                'name' => '12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901'
+                'name' => '12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901',
+                'email' => 'john@test.com',
             ]
-        )->assertStatus(302)
-            ->assertSessionHasErrors(['name']);
+        )->assertStatus(422)
+            ->assertJsonValidationErrors(['name'])
+            ->assertJsonFragment([
+                'errors' => [
+                    'name' => ['The name may not be greater than 190 characters.']
+                ]
+            ]);
     }
 
     public function test_storing_client_validation_email_required_without_phone()
     {
         $user = factory(User::class)->create();
         $this->actingAs($user);
-        $this->call(
+        $this->json(
             'POST',
             '/clients',
             [
@@ -84,10 +96,16 @@ class ClientsControllerTest extends TestCase
                 'email' => '',
                 'phone' => ''
             ]
-        )->assertStatus(302)
-            ->assertSessionHasErrors(['email']);
+        )->assertStatus(422)
+            ->assertJsonValidationErrors(['phone'])
+            ->assertJsonFragment([
+                'errors' => [
+                    'email' => ['The email field is required when phone is not present.'],
+                    'phone' => ['The phone field is required when email is not present.']
+                ]
+            ]);
 
-        $this->call(
+        $this->json(
             'POST',
             '/clients',
             [
@@ -102,7 +120,7 @@ class ClientsControllerTest extends TestCase
     {
         $user = factory(User::class)->create();
         $this->actingAs($user);
-        $this->call(
+        $this->json(
             'POST',
             '/clients',
             [
@@ -110,10 +128,15 @@ class ClientsControllerTest extends TestCase
                 'email' => 'arunas@example',
                 'phone' => ''
             ]
-        )->assertStatus(302)
-            ->assertSessionHasErrors(['email']);
+        )->assertStatus(422)
+            ->assertJsonValidationErrors(['email'])
+            ->assertJsonFragment([
+                'errors' => [
+                    'email' => ['The email format is invalid.']
+                ]
+            ]);
 
-        $this->call(
+        $this->json(
             'POST',
             '/clients',
             [
@@ -124,22 +147,12 @@ class ClientsControllerTest extends TestCase
         )->assertStatus(201);
     }
 
-    public function test_storing_client_validation_phone_is_required_without_email()
+    public function test_storing_client_email_not_required_with_phone()
     {
         $user = factory(User::class)->create();
         $this->actingAs($user);
-        $this->call(
-            'POST',
-            '/clients',
-            [
-                'name' => 'Test CLient',
-                'email' => '',
-                'phone' => ''
-            ]
-        )->assertStatus(302)
-            ->assertSessionHasErrors(['phone']);
 
-        $this->call(
+        $this->json(
             'POST',
             '/clients',
             [
@@ -154,7 +167,7 @@ class ClientsControllerTest extends TestCase
     {
         $user = factory(User::class)->create();
         $this->actingAs($user);
-        $this->call(
+        $this->json(
             'POST',
             '/clients',
             [
@@ -162,10 +175,15 @@ class ClientsControllerTest extends TestCase
                 'email' => '',
                 'phone' => '123456ABN()'
             ]
-        )->assertStatus(302)
-            ->assertSessionHasErrors(['phone']);
+        )->assertStatus(422)
+            ->assertJsonValidationErrors(['phone'])
+            ->assertJsonFragment([
+                'errors' => [
+                    'phone' => ['The phone format is invalid.']
+                ]
+            ]);
 
-        $this->call(
+        $this->json(
             'POST',
             '/clients',
             [
@@ -174,7 +192,7 @@ class ClientsControllerTest extends TestCase
                 'phone' => '+44000 123456'
             ]
         )->assertStatus(201)
-            ->assertSessionMissing('phone');
+            ->assertJsonMissingValidationErrors(['phone']);
     }
 
 
