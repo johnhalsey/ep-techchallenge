@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use Illuminate\Http\Request;
+use App\Http\Resources\ClientResource;
 
 class ClientsController extends Controller
 {
@@ -27,7 +28,7 @@ class ClientsController extends Controller
     {
         $client = Client::where('id', $client)->with('bookings')->first();
 
-        return view('clients.show', ['client' => $client]);
+        return view('clients.show', ['client' => (new ClientResource($client))->withBookings()]);
     }
 
     public function store(Request $request)
