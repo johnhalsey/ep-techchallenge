@@ -26,12 +26,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', 'ClientsController@index')->name('clients.index');
         Route::get('/create', 'ClientsController@create');
         Route::post('/', 'ClientsController@store');
-        Route::get('/{client}', 'ClientsController@show');
-        Route::delete('/{client}', 'ClientsController@destroy');
 
-//    Route::get('/{client}/journals', 'JournalsController@index');
-//    Route::post('/{client}/journals', 'JournalsController@store');
-//    Route::delete('/{client}/journals/{journal}', 'JournalsController@destroy');
+        Route::group(['prefix' => '/{client}'], function () {
+            Route::get('/', 'ClientsController@show');
+            Route::delete('/', 'ClientsController@destroy');
+
+            Route::get('/journals/create', 'JournalsController@create');
+            Route::post('/journals', 'JournalsController@store')->name('clients.journals.store');
+
+            //    Route::delete('/{client}/journals/{journal}', 'JournalsController@destroy');
+        });
     });
 });
 

@@ -35,54 +35,14 @@
                     <button class="btn" :class="{'btn-primary': currentTab == 'journals', 'btn-default': currentTab != 'journals'}" @click="switchTab('journals')">Journals</button>
                 </div>
 
-                <!-- Bookings -->
-                <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
+                <bookings-list v-if="currentTab == 'bookings'"
+                               :bookings="client.bookings">
+                </bookings-list>
+                <journals-list v-if="currentTab == 'journals'"
+                               :client="client"
+                >
+                </journals-list>
 
-                    <select name="bookingsFilter"
-                            id="bookingsFilter"
-                            class="border rounded p-1"
-                            v-model="bookingsFilter"
-                    >
-                        <option v-for="(option, index) in filterOptions"
-                                :key="'filter-option-' + index"
-                                :value="option.key">{{option.value}}</option>
-                    </select>
-
-                    <h3 class="mb-3 mt-3">List of client bookings</h3>
-
-                    <template v-if="filteredBookings && filteredBookings.length > 0">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Notes</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="booking in filteredBookings" :key="booking.id">
-                                    <td>{{booking.time_slot}}</td>
-                                    <td>{{ booking.notes }}</td>
-                                    <td>
-                                        <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </template>
-
-                    <template v-else>
-                        <p class="text-center">The client has no bookings.</p>
-                    </template>
-
-                </div>
-
-                <!-- Journals -->
-                <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
-                    <h3 class="mb-3">List of client journals</h3>
-
-                    <p>(BONUS) TODO: implement this feature</p>
-                </div>
             </div>
         </div>
     </div>
@@ -90,40 +50,21 @@
 
 <script>
 import axios from 'axios';
+import BookingsList from "./Client/BookingsList.vue"
+import JournalsList from "./Client/JournalsList.vue"
 
 export default {
     name: 'ClientShow',
+    components: {
+        BookingsList,
+        JournalsList
+    },
 
     props: ['client'],
 
     data() {
         return {
             currentTab: 'bookings',
-            bookingsFilter: 'all',
-            filterOptions: [
-                {
-                    key: 'past',
-                    value: 'Past Bookings only'
-                },
-                {
-                    key: 'all',
-                    value: 'All bookings'
-                },
-                {
-                    key: 'future',
-                    value: 'Future Bookings only'
-                },
-            ]
-        }
-    },
-
-    computed: {
-        filteredBookings () {
-            if (this.bookingsFilter == 'all') {
-                return this.client.bookings
-            }
-
-            return this.client.bookings.filter(booking => booking.state == this.bookingsFilter)
         }
     },
 
@@ -132,9 +73,6 @@ export default {
             this.currentTab = newTab;
         },
 
-        deleteBooking(booking) {
-            axios.delete(`/bookings/${booking.id}`);
-        }
     }
 }
 </script>

@@ -13,11 +13,12 @@ class ClientsController extends Controller
     {
         $clients = $request->user()
             ->clients()
-            ->with(['bookings'])
             ->withCount(['bookings'])
             ->get();
 
-        return view('clients.index', ['clients' => $clients]);
+        return view('clients.index', [
+            'clients' => ClientResource::collection($clients),
+        ]);
     }
 
     public function create()
@@ -27,7 +28,11 @@ class ClientsController extends Controller
 
     public function show(Client $client)
     {
-        return view('clients.show', ['client' => (new ClientResource($client))->withBookings()]);
+        return view('clients.show', [
+            'client' => (new ClientResource($client))
+                ->withBookings()
+                ->withJournals()
+        ]);
     }
 
     public function store(StoreClientRequest $request)

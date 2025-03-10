@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class ClientResource extends JsonResource
 {
     protected $withBookings = false;
+    protected $withJournals = false;
 
     /**
      * Transform the resource into an array.
@@ -22,6 +23,10 @@ class ClientResource extends JsonResource
             $data['bookings'] = BookingResource::collection($this->bookings);
         }
 
+        if ($this->withJournals) {
+            $data['journals'] = JournalResource::collection($this->journals);
+        }
+
         return $data;
     }
 
@@ -30,4 +35,11 @@ class ClientResource extends JsonResource
         $this->withBookings = true;
         return $this;
     }
+
+    public function withJournals()
+    {
+        $this->withJournals = true;
+        return $this;
+    }
+
 }

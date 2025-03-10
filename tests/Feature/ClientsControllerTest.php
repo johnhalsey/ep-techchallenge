@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\User;
 use App\Client;
 use Tests\TestCase;
+use App\Http\Resources\ClientResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ClientsControllerTest extends TestCase
@@ -30,15 +31,14 @@ class ClientsControllerTest extends TestCase
 
         $this->actingAs($user);
 
-        $expetecedClients = $user->clients()
-            ->with(['bookings'])
+        $clients = $user->clients()
             ->withCount(['bookings'])
             ->get();
 
         $this->get(route('clients.index'))
             ->assertStatus(200)
             ->assertViewIs('clients.index')
-            ->assertViewHas('clients', $expetecedClients);
+            ->assertViewHas('clients', ClientResource::collection($clients));
     }
 
     public function test_storing_client_validation_will_fail_if_name_missing()
