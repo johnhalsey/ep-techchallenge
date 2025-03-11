@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\ClientResource;
 use App\Http\Requests\StoreClientRequest;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ClientsController extends Controller
 {
