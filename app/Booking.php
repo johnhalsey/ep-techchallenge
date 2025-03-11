@@ -2,10 +2,14 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
+    const PAST = 'past';
+    const FUTURE = 'future';
+
     protected $fillable = [
         'client_id',
         'start',
@@ -17,4 +21,9 @@ class Booking extends Model
         'start',
         'end',
     ];
+
+    protected function getTimeSlotAttribute(): string
+    {
+        return Carbon::parse($this->start)->format('l j F Y H:i') . ' to ' . Carbon::parse($this->end)->format('H:i');
+    }
 }

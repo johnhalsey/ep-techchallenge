@@ -6,14 +6,17 @@
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" id="name" class="form-control" v-model="client.name">
+                <div v-if="errorBagHas('name')" class="text-red-500">{{errorBagValue('name')}}</div>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="text" id="email" class="form-control" v-model="client.email">
+                <div v-if="errorBagHas('email')" class="text-red-500">{{errorBagValue('email')}}</div>
             </div>
             <div class="form-group">
                 <label for="phone">Phone</label>
                 <input type="text" id="phone" class="form-control" v-model="client.phone">
+                <div v-if="errorBagHas('phone')" class="text-red-500">{{errorBagValue('phone')}}</div>
             </div>
             <div class="form-group">
                 <label for="name">Address</label>
@@ -53,16 +56,41 @@ export default {
                 address: '',
                 city: '',
                 postcode: '',
-            }
+            },
+            errorBag: []
         }
     },
 
     methods: {
         storeClient() {
-            axios.post('/clients', this.client)
-                .then((data) => {
-                    window.location.href = data.data.url;
-                });
+            this.errorBag = []
+            const headers = {
+                'Content-Type': 'application/json',
+            }
+            axios.post('/clients', this.client, {
+                headers
+            })
+                .then(response => {
+                    window.location.href = response.data.url;
+                })
+                .catch((error) => {
+                    for (let key in error.response.data.errors) {
+                        this.errorBag.push({
+                            key: key,
+                            value: error.response.data.errors[key][0]
+                        })
+                    }
+                })
+        },
+        errorBagHas(key) {
+            if (this.errorBag.find(error => error.key == key)) {
+                return true
+            }
+
+            return false
+        },
+        errorBagValue(key) {
+            return this.errorBag.find(error => error.key == key).value
         }
     }
 }

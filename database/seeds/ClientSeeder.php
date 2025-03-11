@@ -13,10 +13,15 @@ class ClientSeeder extends Seeder
      */
     public function run()
     {
-        // $user = User::first() ?? factory(User::class)->create();
+        for ($i = 0; $i < 15; $i++) {
+            $user = factory(User::class)->create([
+                'email'    => 'user' . $i . '@example.com',
+                'password' => bcrypt('secret'),
+            ]);
 
-        factory(Client::class, 150)->create([
-            // 'user_id' => $user->id,
-        ]);
+            factory(Client::class, 10)->create([
+                'user_id' => $user->id,
+            ]);
+        }
     }
 }

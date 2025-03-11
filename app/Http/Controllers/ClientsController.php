@@ -3,51 +3,62 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Resources\ClientResource;
+use App\Http\Requests\StoreClientRequest;
 
 class ClientsController extends Controller
 {
-    public function index()
+    public function index(Request $request): View
     {
-        $clients = Client::all();
+        $clients = $request->user()
+            ->clients()
+            ->withCount(['bookings'])
+            ->get();
 
-        foreach ($clients as $client) {
-            $client->append('bookings_count');
-        }
-
-        return view('clients.index', ['clients' => $clients]);
+        return view('clients.index', [
+            'clients' => ClientResource::collection($clients),
+        ]);
     }
 
-    public function create()
+    public function create(): View
     {
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show(Client $client): View
     {
-        $client = Client::where('id', $client)->first();
-
-        return view('clients.show', ['client' => $client]);
+        return view('clients.show', [
+            'client' => (new ClientResource($client))
+                ->withBookings()
+                ->withJournals()
+        ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreClientRequest $request): JsonResponse
     {
         $client = new Client;
+        $client->user_id = $request->user()->id;
         $client->name = $request->get('name');
         $client->email = $request->get('email');
         $client->phone = $request->get('phone');
-        $client->adress = $request->get('adress');
+        $client->address = $request->get('address');
         $client->city = $request->get('city');
         $client->postcode = $request->get('postcode');
         $client->save();
 
-        return $client;
+        return response()->json('OK', 201);
     }
 
-    public function destroy($client)
+    public function destroy(Client $client): JsonResponse
     {
-        Client::where('id', $client)->delete();
+        $client->delete();
 
-        return 'Deleted';
+        // attempted to return a 204 here, but axios did not pick this up
+        // as a successful response for DELETE
+
+        return response()->json();
     }
 }

@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Client extends Model
 {
@@ -21,12 +23,17 @@ class Client extends Model
 
     public function bookings()
     {
-        return $this->hasMany(Booking::class);
+        return $this->hasMany(Booking::class)->orderBy('created_at');
     }
 
-    public function getBookingsCountAttribute()
+    public function user(): BelongsTo
     {
-        return $this->bookings->count();
+        return $this->belongsTo(User::class);
+    }
+
+    public function journals(): HasMany
+    {
+        return $this->hasMany(Journal::class)->orderBy('created_at', 'DESC');
     }
 
     public function getUrlAttribute()
