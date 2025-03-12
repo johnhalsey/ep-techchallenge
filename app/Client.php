@@ -12,7 +12,7 @@ class Client extends Model
         'name',
         'email',
         'phone',
-        'adress',
+        'address',
         'city',
         'postcode',
     ];
@@ -23,7 +23,7 @@ class Client extends Model
 
     public function bookings()
     {
-        return $this->hasMany(Booking::class)->orderBy('created_at');
+        return $this->hasMany(Booking::class)->orderBy('start');
     }
 
     public function user(): BelongsTo

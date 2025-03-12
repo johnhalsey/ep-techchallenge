@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Client;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\ClientResource;
 use App\Http\Requests\StoreClientRequest;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class ClientsController extends Controller
 {
@@ -31,13 +33,11 @@ class ClientsController extends Controller
     public function show(Client $client): View
     {
         return view('clients.show', [
-            'client' => (new ClientResource($client))
-                ->withBookings()
-                ->withJournals()
+            'client' => (new ClientResource($client->load(['bookings', 'journals'])))
         ]);
     }
 
-    public function store(StoreClientRequest $request): JsonResponse
+    public function store(StoreClientRequest $request): JsonResource
     {
         $client = new Client;
         $client->user_id = $request->user()->id;
@@ -49,7 +49,7 @@ class ClientsController extends Controller
         $client->postcode = $request->get('postcode');
         $client->save();
 
-        return response()->json('OK', 201);
+        return new ClientResource($client);
     }
 
     public function destroy(Client $client): JsonResponse

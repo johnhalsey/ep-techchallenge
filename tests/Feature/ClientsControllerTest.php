@@ -192,5 +192,26 @@ class ClientsControllerTest extends TestCase
         )->assertStatus(201);
     }
 
+    public function test_storing_a_client_will_return_client_object()
+    {
+        $user = factory(User::class)->create();
 
+        $this->actingAs($user);
+
+        $response = $this->json(
+            'POST',
+            '/clients',
+            [
+                'name' => 'Test Client',
+                'email' => '',
+                'phone' => '01234567890',
+                'address' => '1 The street',
+                'city' => 'New York',
+                'postcode' => '12345',
+            ]
+        )->assertStatus(201);
+
+        $data = json_decode($response->getContent(), true);
+        $this->assertSame($data['id'], (new ClientResource(Client::first()))->toArray(request())['id']);
+    }
 }

@@ -13,6 +13,10 @@ class ClientSeeder extends Seeder
      */
     public function run()
     {
+        // delete any existing seeded users
+        Client::query()->delete();
+        User::query()->delete();
+
         for ($i = 0; $i < 15; $i++) {
             $user = factory(User::class)->create([
                 'email'    => 'user' . $i . '@example.com',

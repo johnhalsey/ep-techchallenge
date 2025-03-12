@@ -15,7 +15,7 @@ class AddUserIdToClientsTable extends Migration
     {
         Schema::table('clients', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->nullable()->after('id')->index();
-            $table->foreign('user_id')->references('id')->on('users')->onCascade('set null');
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
         });
     }
 
